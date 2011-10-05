@@ -1,0 +1,190 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+  <title>Shower</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1274, user-scalable=no">
+  <link rel="stylesheet" href="shower/themes/swiss/styles/style.css">
+  <style>
+    .slide#cover {
+      font-size: 2.7em;
+    }
+      .slide#cover header {
+        font-size: 2em;
+      }
+      .slide#cover .info {
+        padding-top: 30px;
+      }
+  </style>
+</head>
+<body class="list">
+  <header class="caption">
+    <h1>Web development with Clojure</h1>
+  </header>
+  <div class="slide" id="cover"><div>
+    <section>
+      <header>
+        <h1>Web development<br>with Clojure</h1>
+      </header>
+      <div class="info">
+        <div>Adeel Ahmad Khan</div>
+        <div>Clojure UG Berlin</div>
+        <div>Oct 2011</div>
+      </div>
+    </section>
+  </div></div>
+  <div class="slide" id="http-1"><div>
+    <section>
+      <p>An HTTP server accepts requests and returns responses.</p>
+    </section>
+  </div></div>
+  <div class="slide" id="http-2"><div>
+    <section>
+      <pre><code>GET / HTTP/1.1
+Host: clojure.org
+</code></pre>
+    </section>
+  </div></div>
+  <div class="slide" id="http-3"><div>
+    <section>
+      <pre><code>POST /1/statuses/update.json HTTP/1.1
+Host: api.twitter.com
+
+status=learning+clojure
+</code></pre>
+    </section>
+  </div></div>
+  <div class="slide" id="http-4"><div>
+    <section>
+      <pre><code>HTTP/1.1 200 OK
+Date: Wed, 05 Oct 2011 13:27:09 GMT
+Content-Type: text/plain
+Content-Length: 8
+Server: Jetty(6.1.26)
+
+Go away.</code></pre>
+    </section>
+  </div></div>
+  <div class="slide" id="http-5"><div>
+    <section>
+      <pre><code>HTTP/1.1 200 OK
+Date: Wed, 05 Oct 2011 13:27:09 GMT
+Content-Type: text/plain
+Content-Length: 8
+Server: <mark>Jetty</mark>(6.1.26)
+
+Go away.</code></pre>
+    </section>
+  </div></div>
+  <div class="slide" id="jetty-1"><div>
+    <section>
+      <p>On the JVM we use <strong>Jetty</strong>.</p>
+    </section>
+  </div></div>
+  <div class="slide" id="jetty-2"><div>
+    <section>
+      <pre><code>import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletException;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.handler.AbstractHandler;
+public class HelloWorld extends AbstractHandler {
+    public void handle(String target,
+                       Request baseRequest,
+                       HttpServletRequest request,
+                       HttpServletResponse response) 
+</code></pre>
+    </section>
+  </div></div>
+  <div class="slide" id="jetty-3"><div>
+    <section>
+      <p>Just kidding.</p>
+    </section>
+  </div></div>
+  <div class="slide" id="ring-1"><div>
+    <section>
+      <p><strong>Ring</strong> is an abstraction of HTTP for Clojure, written by Mark McGranaghan.</p>
+      <p>It&rsquo;s built on top of Jetty.</p>
+    </section>
+  </div></div>
+  <div class="slide" id="ring-2"><div>
+    <section>
+      <pre><code>{:request-method :get
+ :uri            "/"}
+</code></pre>
+    </section>
+  </div></div>
+  <div class="slide" id="ring-3"><div>
+    <section>
+      <pre><code>{:status  200
+ :headers {"Content-Type" "text/html"}
+ :body    "&lt;p&gt;Hi.&lt;/p&gt;"}
+</code></pre>
+    </section>
+  </div></div>
+  <div class="slide" id="ring-4"><div>
+    <section style="font-size: 0.75em; line-height: 1.2em">
+      <pre><code>(defn app [request]
+  (cond
+    (= (request :uri) "/entrance")
+      {:body "Hello there!"}
+    (= (request :uri) "/exit")
+      {:body "Goodbye."}
+    :else
+      {:status 404
+       :body   "Try the entrance or the exit."}))
+</code></pre>
+    </section>
+  </div></div>
+
+  <div class="slide" id="compojure-1"><div>
+    <section>
+      <p><strong>Compojure</strong> is a &ldquo;framework&rdquo; on top of Ring.</p>
+    </section>
+  </div></div>
+  <div class="slide" id="compojure-2"><div>
+    <section style="font-size: 0.75em; line-height: 1.2em">
+      <pre><code>(defroutes main-routes
+  (POST "/users" {user :params}
+    (users/create! user))
+  (GET "/users/:id" [id]
+    (users/get id))
+  ...)</code></pre>
+    </section>
+  </div></div>
+  <div class="slide" id="compojure-3"><div>
+    <section style="font-size: 0.75em; line-height: 1.2em">
+      <pre><code>(defroutes main-routes
+  (<mark>POST "/users"</mark> {user :params}
+    (users/create! user))
+  (<mark>GET "/users/:id"</mark> [id]
+    (users/get id))
+  ...)</code></pre>
+    </section>
+  </div></div>
+  <div class="slide" id="compojure-4"><div>
+    <section style="font-size: 0.75em; line-height: 1.2em">
+      <pre><code>(defroutes main-routes
+  (POST "/users" {user :params}
+    <mark>(users/create! user)</mark>)
+  (GET "/users/:id" [id]
+    <mark>(users/get id)</mark>)
+  ...)</code></pre>
+    </section>
+  </div></div>
+  <div class="slide" id="compojure-5"><div>
+    <section>
+      <p>Add sessions, cookies, param parsing:</p>
+      <pre><code>(def app (handler/site main-routes))</code></pre>
+    </section>
+  </div></div>
+  <div class="slide" id="end"><div>
+    <section>
+      <p>Let&rsquo;s build a real app!</p>
+    </section>
+  </div></div>
+
+  <script src="shower/scripts/script.js"></script>
+</body>
+</html>
